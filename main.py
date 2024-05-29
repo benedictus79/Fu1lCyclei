@@ -65,7 +65,7 @@ def process_single_lesson(lesson_path, lesson_data):
 
 
 def process_lessons(lessons):
-  with ThreadPoolExecutor(max_workers=3) as executor:
+  with ThreadPoolExecutor(max_workers=2) as executor:
     futures = [executor.submit(process_single_lesson, lesson_path, lesson_data) for lesson_path, lesson_data in lessons.items()]
       
     for future in futures:
