@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 def data_modules(course_name, course_link):
   modules_data = {}
   folder_course = create_folder(course_name)
-  url = f'https://portal.fullcycle.com.br/api/cursos/turma/{course_link['class']}/categoria/{course_link['id']}/list.json'
+  url = f"https://portal.fullcycle.com.br/api/cursos/turma/{course_link['class']}/categoria/{course_link['id']}/list.json"
   response = cyclesession.get(url).json()
   for data in response:
     modules_data[data['nome']] = {'id': data['id'], 'path':folder_course, 'class': course_link['class']}
@@ -36,21 +36,21 @@ def process_lesson_data(path, lesson_data):
       download_path = os.path.join(path_lesson_media, 'aula')
       download_with_ffmpeg(decryption_key, download_path, lesson_url)
     if data.get('tipo') == 2:
-      lesson_title, lesson_text = f'{i:03d} - {data['titulo']}', data['texto_changed']
+      lesson_title, lesson_text = f'{i:03d} - {data["titulo"]}', data['texto_changed']
       path_lesson_text = create_folder(os.path.join(path, clear_folder_name(lesson_title)))
       save_html(path_lesson_text, lesson_text, '#333')
     if data.get('tipo') == 8:
-      lesson_title, lesson_link = f'{i:03d} - {data['titulo']}', data['link']
+      lesson_title, lesson_link = f"{i:03d} - {data['titulo']}", data['link']
       path_lesson_link = create_folder(os.path.join(path, clear_folder_name(lesson_title)))
       save_link(path_lesson_link, lesson_link)
     if data.get('tipo') == 6:
-      lesson_title, lesson_project = f'{i:03d} - {data['titulo']}', data['projeto_fase']['id']
+      lesson_title, lesson_project = f"{i:03d} - {data['titulo']}", data['projeto_fase']['id']
       path_lesson_project = create_folder(os.path.join(path, clear_folder_name(lesson_title)))
       url = f'https://portal.fullcycle.com.br/api/projetos/fase/{lesson_project}.json'
       response = cyclesession.get(url).json()['descricao']
       save_html(path_lesson_project, response)
     if data.get('tipo') == 4:
-      lesson_title, question_id = f'{i:03d} - {data['titulo']}', data['id']
+      lesson_title, question_id = f"{i:03d} - {data['titulo']}", data['id']
       path_lesson_question = create_folder(os.path.join(path, clear_folder_name(lesson_title)))
       response = cyclesession.get(f'https://portal.fullcycle.com.br/api/cursos/conteudo/{question_id}/avaliacoes.json').json()
       save_question(path_lesson_question, response)
@@ -84,10 +84,10 @@ def data_lessons(path, lessons):
 def process_modules(modules):
   total_modules, success_index = len(modules), 0
   for module_title, module_data in tqdm(modules.items(), total=total_modules, desc='Processing Modules'):
-    url = f'https://portal.fullcycle.com.br/api/cursos/turma/{module_data['class']}/curso/{module_data['id']}/capitulos.json?expand_conteudos=1'
+    url = f"https://portal.fullcycle.com.br/api/cursos/turma/{module_data['class']}/curso/{module_data['id']}/capitulos.json?expand_conteudos=1"
     response = cyclesession.get(url)
     if response.status_code != 200:
-      msg = f'Aviso: {response.json()['message']} ||| {module_title}'
+      msg = f"Aviso: {response.json()['message']} ||| {module_title}"
       logger(msg, warning=True)
       continue
     success_index += 1
