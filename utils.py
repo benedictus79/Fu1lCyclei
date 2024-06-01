@@ -20,7 +20,7 @@ def benedictus_ascii_art():
   Script: {name}
   Version: {version}
   """
-  print(alexandria.format(name='fu11cyclei', version='Alpha 0.1'))
+  print(alexandria.format(name='fu11cyclei', version='Alpha 0.2'))
 
 
 def clear_screen():
