@@ -15,12 +15,12 @@ def benedictus_ascii_art():
     |  _|| |_| | | | |__| |_| | (__| |  __/ |
     |_|   \__,_|_|_|\____\__, |\___|_|\___|_|
                         |___/               
-  Author: Bendictus | Jão
+  Author: Bendictus | Jão | YdzpXDs
   Community: https://t.me/+7imfib1o0CQwNmUx5
   Script: {name}
   Version: {version}
   """
-  print(alexandria.format(name='fu11cyclei', version='Alpha 0.1'))
+  print(alexandria.format(name='fu11cyclei', version='Alpha 0.2'))
 
 
 def clear_screen():
@@ -74,3 +74,17 @@ def shorten_folder_name(full_path, max_length=241):
   base_name, extension = os.path.splitext(file_name)
   base_name = base_name[:max_length - len(directory) - len(extension) - 1]
   return os.path.join(directory, base_name + extension)
+
+
+class SilentLogger(object):
+  def debug(self, msg):
+    pass
+
+  def warning(self, msg):
+    if 'If this is a livestream,' in str(msg):return
+    logger(msg, warning=True)
+
+  def error(self, msg):
+    if 'HTTP Error 403' in str(msg):return
+    if 'No such file or directory' in str(msg):return
+    logger(msg, error=True)
