@@ -2,7 +2,8 @@ import subprocess
 import os
 from bs4 import BeautifulSoup
 from login import requests
-from utils import logger, shorten_folder_name
+from utils import SilentLogger, logger, shorten_folder_name
+import yt_dlp
 
 
 
@@ -15,7 +16,7 @@ def download_with_ffmpeg(decryption_key, name_lesson, url):
       '-y',
       '-i', url,
       '-codec', 'copy',
-      '-threads', '4',
+      '-threads', '8',
       f'{name_lesson}.mp4'
     ]
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -104,3 +105,35 @@ def get_key_drm(license_url, pssh):
   decryption_results = requests.post(api_url, json=json_data, headers=headers)
   decryption_key = decryption_results.json()['Message'].split(':')[1].strip()
   return decryption_key
+
+
+def ytdlp_options(output_folder):
+  options = {
+    'format': 'bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best',
+    'outtmpl': f'{output_folder}.%(ext)s',
+    'quiet': True,
+    'no_progress': True,
+    'logger': SilentLogger(),
+    'http_headers': {'referer': 'https://plataforma.fullcycle.com.br/'},
+    'concurrent_fragment_downloads': 10,
+    'fragment_retries': 50,
+    'file_access_retries': 50,
+    'retries': 50,
+    'continuedl': True,
+    'extractor_retries': 50,
+    'trim_file_name': 249,
+  }
+  
+  return options
+
+
+def download_with_ytdlp(ydl_opts, media):
+  while True:
+    try:
+      with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([media])
+        return
+    except yt_dlp.utils.DownloadError as e:
+      msg = f'''Verifique manualmente, se não baixou tente novamente mais tarde: {ydl_opts['outtmpl']} ||| {media} ||| {e}'''
+      logger(msg, warning=True)
+      return
