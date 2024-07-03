@@ -3,7 +3,7 @@ from download import download_with_ffmpeg, download_with_ytdlp, get_key_drm, get
 from login import requests, cyclesession, selected_course
 from utils import clear_folder_name, decode_content, logger, os, create_folder
 from tqdm import tqdm
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def data_modules(course_name, course_link):
@@ -72,10 +72,10 @@ def process_single_lesson(lesson_path, lesson_data):
 
 
 def process_lessons(lessons):
-  with ThreadPoolExecutor(max_workers=2) as executor:
+  with ThreadPoolExecutor(max_workers=3) as executor:
     futures = [executor.submit(process_single_lesson, lesson_path, lesson_data) for lesson_path, lesson_data in lessons.items()]
       
-    for future in futures:
+    for future in as_completed(futures):
       future.result()
 
 

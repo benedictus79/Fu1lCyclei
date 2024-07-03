@@ -109,19 +109,20 @@ def get_key_drm(license_url, pssh):
 
 def ytdlp_options(output_folder):
   options = {
-    'format': 'bv[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best',
+    'logger': SilentLogger(),
+    'merge_output_format': 'mp4',
+    'format': 'bestvideo+bestaudio/best',
     'outtmpl': f'{output_folder}.%(ext)s',
     'quiet': True,
+    'continuedl': True,
     'no_progress': True,
-    'logger': SilentLogger(),
     'http_headers': {'referer': 'https://plataforma.fullcycle.com.br/'},
-    'concurrent_fragment_downloads': 10,
+    'retries': 50,
+    'trim_file_name': 249,
     'fragment_retries': 50,
     'file_access_retries': 50,
-    'retries': 50,
-    'continuedl': True,
     'extractor_retries': 50,
-    'trim_file_name': 249,
+    'concurrent_fragment_downloads': 10,
   }
   
   return options
