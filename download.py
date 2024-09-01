@@ -49,9 +49,10 @@ def save_html(content_folder, html, color=None, transcricao=None):
 
   if transcricao:
     content_path = f"{os.path.join(content_folder, 'transcricao.html')}"
-
-  with open(content_path, 'w', encoding='utf-8') as file:
-    file.write(html)
+  
+  if not os.path.exists(content_path):
+    with open(content_path, 'w', encoding='utf-8') as file:
+      file.write(html)
 
 
 def save_link(link_folder, link_url):
@@ -59,6 +60,7 @@ def save_link(link_folder, link_url):
   if not os.path.exists(file_path):
     with open(file_path, 'w', encoding='utf-8') as file:
       file.write(str(link_url))
+
 
 def save_question(path, data):
   html_content = '<html>\n<head>\n<title>Questões e Respostas</title>\n</head>\n<body>\n<h1>Questões e Respostas</h1>\n'
@@ -107,22 +109,24 @@ def get_key_drm(license_url, pssh):
   return decryption_key
 
 
-def ytdlp_options(output_folder):
+def ytdlp_options(media, output_folder):
   options = {
-    'logger': SilentLogger(),
+    'logger': SilentLogger(media, f'{output_folder}.%(ext)s'),
     'merge_output_format': 'mp4',
     'format': 'bestvideo+bestaudio/best',
     'outtmpl': f'{output_folder}.%(ext)s',
     'quiet': True,
     'continuedl': True,
+    'no_overwrites': True,
     'no_progress': True,
-    'http_headers': {'referer': 'https://plataforma.fullcycle.com.br/'},
+    'http_headers': {'referer': 'https://plataforma.fullcycle.com.br/', 'Upgrade-Insecure-Requests': '1'},
     'retries': 50,
     'trim_file_name': 249,
     'fragment_retries': 50,
     'file_access_retries': 50,
     'extractor_retries': 50,
     'concurrent_fragment_downloads': 10,
+    'curl_cffi': True,
   }
   
   return options
