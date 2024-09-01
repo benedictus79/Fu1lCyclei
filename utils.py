@@ -77,14 +77,15 @@ def shorten_folder_name(full_path, max_length=241):
 
 
 class SilentLogger(object):
+  def __init__(self, url=None, output_path=None):
+    self.url = url
+    self.output_path = output_path
+
   def debug(self, msg):
     pass
 
   def warning(self, msg):
-    if 'If this is a livestream,' in str(msg):return
-    logger(msg, warning=True)
+    logger(f"WARNING: {msg} - URL: {self.url}, Path: {self.output_path}")
 
   def error(self, msg):
-    if 'HTTP Error 403' in str(msg):return
-    if 'No such file or directory' in str(msg):return
-    logger(msg, error=True)
+    logger(f"ERROR: {msg} - URL: {self.url}, Path: {self.output_path}")
